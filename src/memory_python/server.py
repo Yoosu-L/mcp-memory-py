@@ -313,5 +313,58 @@ async def open_nodes(names: List[str]) -> KnowledgeGraph:
     return await knowledge_graph.open_nodes(names)
 
 
+async def initialize_test_data():
+    # Create test person entities
+    test_entities = [
+        {
+            "name": "Alice",
+            "entityType": "person",
+            "observations": ["Software engineer", "Likes hiking"],
+        },
+        {
+            "name": "Bob",
+            "entityType": "person",
+            "observations": ["Data scientist", "Coffee enthusiast"],
+        },
+        {
+            "name": "Carol",
+            "entityType": "person",
+            "observations": ["Product manager", "Avid reader"],
+        },
+    ]
+
+    # Create test location entities
+    location_entities = [
+        {
+            "name": "San Francisco",
+            "entityType": "location",
+            "observations": ["Tech hub", "Foggy weather"],
+        },
+        {
+            "name": "New York",
+            "entityType": "location",
+            "observations": ["Financial center", "Busy streets"],
+        },
+    ]
+
+    # Create all entities
+    await knowledge_graph.create_entities(test_entities)
+    await knowledge_graph.create_entities(location_entities)
+
+    # Create test relations
+    test_relations = [
+        {"from_": "Alice", "to": "Bob", "relationType": "colleague"},
+        {"from_": "Bob", "to": "Carol", "relationType": "friend"},
+        {"from_": "Alice", "to": "San Francisco", "relationType": "lives_in"},
+        {"from_": "Bob", "to": "New York", "relationType": "lives_in"},
+    ]
+
+    await knowledge_graph.create_relations(test_relations)
+
+
 if __name__ == "__main__":
+    import asyncio
+
+    # Initialize test data before running the server
+    asyncio.run(initialize_test_data())
     mcp.run()
