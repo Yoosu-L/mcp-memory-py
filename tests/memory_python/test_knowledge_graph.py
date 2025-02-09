@@ -1,10 +1,11 @@
 import pytest
 import pytest_asyncio
 import os
-from pathlib import Path
 import tempfile
-import json
-from .knowledge_graph import KnowledgeGraphManager, Entity, Relation, KnowledgeGraph
+
+from memory_python.knowledge_graph import (
+    KnowledgeGraphManager,
+)
 
 
 @pytest_asyncio.fixture
