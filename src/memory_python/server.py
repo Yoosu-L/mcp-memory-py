@@ -1,8 +1,73 @@
 #!/usr/bin/env python3
 
+import logging
+import json
+import time
+import functools
+from pathlib import Path
+from datetime import datetime
 from mcp.server.fastmcp import FastMCP
 from .knowledge_graph import KnowledgeGraphManager, Entity, Relation, KnowledgeGraph
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Callable, TypeVar, ParamSpec
+
+# Set up logging
+log_dir = Path("logs")
+log_dir.mkdir(exist_ok=True)
+log_file = log_dir / f"mcp_server_{datetime.now().strftime('%Y%m%d')}.log"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
+)
+
+logger = logging.getLogger("mcp_memory")
+
+# Type variables for decorator
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
+def log_tool_call(func: Callable[P, R]) -> Callable[P, R]:
+    """Decorator to log tool calls with timing and results."""
+
+    @functools.wraps(func)
+    async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        start_time = time.time()
+        tool_name = func.__name__
+
+        # Log call
+        try:
+            call_args = {
+                "args": [str(arg) for arg in args[1:]],  # Skip self
+                "kwargs": {k: str(v) for k, v in kwargs.items()},
+            }
+            logger.info(f"Tool call: {tool_name} - Args: {json.dumps(call_args)}")
+
+            # Execute tool
+            result = await func(*args, **kwargs)
+
+            # Log success
+            execution_time = time.time() - start_time
+            logger.info(
+                f"Tool success: {tool_name} - "
+                f"Time: {execution_time:.2f}s - "
+                f"Result: {str(result)[:200]}..."  # Truncate long results
+            )
+            return result
+
+        except Exception as e:
+            # Log error
+            execution_time = time.time() - start_time
+            logger.error(
+                f"Tool error: {tool_name} - "
+                f"Time: {execution_time:.2f}s - "
+                f"Error: {str(e)}"
+            )
+            raise
+
+    return wrapper
+
 
 # Create FastMCP server
 mcp = FastMCP("Memory Graph", dependencies=["mcp"])
@@ -12,6 +77,7 @@ knowledge_graph = KnowledgeGraphManager()
 
 
 @mcp.tool()
+@log_tool_call
 async def create_entities(entities: List[Entity]) -> List[Entity]:
     """Create multiple new entities in the knowledge graph.
 
@@ -25,6 +91,7 @@ async def create_entities(entities: List[Entity]) -> List[Entity]:
 
 
 @mcp.tool()
+@log_tool_call
 async def create_relations(relations: List[Relation]) -> List[Relation]:
     """Create new relations between entities in the knowledge graph.
 
@@ -38,6 +105,7 @@ async def create_relations(relations: List[Relation]) -> List[Relation]:
 
 
 @mcp.tool()
+@log_tool_call
 async def add_observations(observations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Add new observations to existing entities.
 
@@ -51,6 +119,7 @@ async def add_observations(observations: List[Dict[str, Any]]) -> List[Dict[str,
 
 
 @mcp.tool()
+@log_tool_call
 async def delete_entities(entity_names: List[str]) -> None:
     """Delete entities and their associated relations from the graph.
 
@@ -61,6 +130,7 @@ async def delete_entities(entity_names: List[str]) -> None:
 
 
 @mcp.tool()
+@log_tool_call
 async def delete_observations(deletions: List[Dict[str, Any]]) -> None:
     """Delete specific observations from entities.
 
@@ -71,6 +141,7 @@ async def delete_observations(deletions: List[Dict[str, Any]]) -> None:
 
 
 @mcp.tool()
+@log_tool_call
 async def delete_relations(relations: List[Relation]) -> None:
     """Delete specific relations from the graph.
 
@@ -81,6 +152,7 @@ async def delete_relations(relations: List[Relation]) -> None:
 
 
 @mcp.tool()
+@log_tool_call
 async def read_graph() -> KnowledgeGraph:
     """Read the entire knowledge graph.
 
@@ -91,6 +163,7 @@ async def read_graph() -> KnowledgeGraph:
 
 
 @mcp.tool()
+@log_tool_call
 async def search_nodes(query: str) -> KnowledgeGraph:
     """Search for nodes and their relations matching a query string.
 
@@ -104,6 +177,7 @@ async def search_nodes(query: str) -> KnowledgeGraph:
 
 
 @mcp.tool()
+@log_tool_call
 async def open_nodes(names: List[str]) -> KnowledgeGraph:
     """Get a subgraph containing specific nodes and their interconnecting relations.
 
@@ -114,7 +188,3 @@ async def open_nodes(names: List[str]) -> KnowledgeGraph:
         Subgraph containing the specified entities and relations between them
     """
     return await knowledge_graph.open_nodes(names)
-
-
-if __name__ == "__main__":
-    mcp.run()
