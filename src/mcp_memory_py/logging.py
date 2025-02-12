@@ -1,23 +1,28 @@
 import logging
 import json
 import time
+import os
 import functools
 from pathlib import Path
 from datetime import datetime
 from typing import Callable, TypeVar, ParamSpec
 
-# Set up logging
-log_dir = Path("logs")
-log_dir.mkdir(exist_ok=True)
-log_file = log_dir / f"mcp_server_{datetime.now().strftime('%Y%m%d')}.log"
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
-)
-
 logger = logging.getLogger("mcp_memory")
+
+# Only set up file logging if DEBUG_LOGGING is enabled
+if os.getenv("DEBUG_LOGGING", "").lower() == "true":
+    log_dir = Path("logs")
+    log_dir.mkdir(exist_ok=True)
+    log_file = log_dir / f"mcp_server_{datetime.now().strftime('%Y%m%d')}.log"
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
+    )
+else:
+    # Disable logging when DEBUG_LOGGING is not enabled
+    logger.addHandler(logging.NullHandler())
 
 # Type variables for decorator
 P = ParamSpec("P")
