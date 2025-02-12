@@ -193,7 +193,7 @@ cli = [
 ]
 
 [[package]]
-name = "mcp-memory-python"
+name = "mcp-memory-py"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

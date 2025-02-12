@@ -3,7 +3,7 @@ import pytest_asyncio
 import os
 import tempfile
 
-from memory_python.knowledge_graph import (
+from mcp_memory_py.knowledge_graph import (
     KnowledgeGraphManager,
 )
 
