@@ -1,6 +1,6 @@
 [project]
 name = "mcp-memory-py"
-version = "0.1.0"
+dynamic = ["version"]
 description = "MCP server for enabling memory for Claude through a knowledge graph"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -11,7 +11,7 @@ license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "uv-dynamic-versioning"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
@@ -23,3 +23,10 @@ dev = [
 
 [tool.pytest.ini_options]
 pythonpath = "src"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+style = "pep440"
+vcs = "git"
