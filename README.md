@@ -1,7 +1,7 @@
 # Knowledge Graph Memory Server
 A basic implementation of persistent memory using a local knowledge graph. This lets Claude remember information about the user across chats.
 
-This is a Python port of the [original](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) reference server.  
+This is a Python port of the [original](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) reference server (version 0.6.3).
 I took the opportunity to do some refactoring of the code, mostly aided by Cline (and Claude Sonnet 3.5).
 
 ## Core Concepts

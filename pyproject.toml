@@ -1,7 +1,7 @@
 [project]
 name = "mcp-memory-python"
 version = "0.1.0"
-description = "Add your description here"
+description = "MCP server for enabling memory for Claude through a knowledge graph"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
