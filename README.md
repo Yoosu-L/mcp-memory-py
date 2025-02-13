@@ -140,13 +140,11 @@ Add this to your claude_desktop_config.json:
   "mcpServers": {
     "memory-python":
     {
-      "command": "uv",
+      "command": "uvx",
       "args": [
-        "run",
-        "--directory",
-        "/path/to/this/repo/mcp-memory-python/src",
-        "-m",
-        "memory_python"
+        "--refresh",
+        "--quiet",
+        "mcp-memory-py"
       ],
     "env": {
         "MEMORY_FILE_PATH": "/path/to/custom/memory.json"
@@ -155,7 +153,9 @@ Add this to your claude_desktop_config.json:
 }
 ```
 
+##### Env arguments
 - `MEMORY_FILE_PATH`: Path to the memory storage JSON file (default: `memory.json` in the server directory)
+- `DEBUG_LOGGING`: Produces daily logfile with description of server calls. To be used only for development
 
 ### System Prompt
 
@@ -197,7 +197,7 @@ Run unit tests:
 ## Debugging
 
 Debugging using MCP Inspector:
-`npx @modelcontextprotocol/inspector uv run --directory src -m memory_python`
+`npx @modelcontextprotocol/inspector uv run --directory src -m mcp_memory_py`
 
 ## License
 
