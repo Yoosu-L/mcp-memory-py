@@ -124,3 +124,9 @@ async def open_nodes(names: List[str]) -> KnowledgeGraph:
         Subgraph containing the specified entities and relations between them
     """
     return await knowledge_graph.open_nodes(names)
+
+def main():
+    mcp.run()
+
+if __name__ == "__main__":
+    main()

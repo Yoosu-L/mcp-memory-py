@@ -11,7 +11,7 @@ license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
 [project.scripts]
-mcp-memory-py = "mcp_memory_py.__main__:main"
+mcp-memory-py = "mcp_memory_py.server:main"
 
 [build-system]
 requires = ["hatchling", "uv-dynamic-versioning"]
