@@ -5,7 +5,7 @@ description = "MCP server for enabling memory for Claude through a knowledge gra
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "mcp[cli]>=1.2.1",
+    "mcp[cli]>=1.6.0",
 ]
 license = "MIT"
 license-files = ["LICEN[CS]E*"]

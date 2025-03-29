@@ -6,7 +6,7 @@ from .logging import log_tool_call
 from typing import List, Dict, Any
 
 # Create FastMCP server
-mcp = FastMCP("Memory Graph", dependencies=["mcp"])
+mcp = FastMCP("Memory Graph", dependencies=["mcp"], log_level="ERROR")
 
 # Initialize knowledge graph manager
 knowledge_graph = KnowledgeGraphManager()

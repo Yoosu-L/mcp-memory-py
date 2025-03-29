@@ -41,7 +41,7 @@ class KnowledgeGraphManager:
 
     async def load_graph(self) -> KnowledgeGraph:
         try:
-            with open(self.memory_path, "r") as f:
+            with open(self.memory_path, "r", encoding="utf-8") as f:
                 lines = [line.strip() for line in f if line.strip()]
                 graph: KnowledgeGraph = {"entities": [], "relations": []}
                 for line in lines:
@@ -59,11 +59,11 @@ class KnowledgeGraphManager:
     async def save_graph(self, graph: KnowledgeGraph):
         lines = []
         for entity in graph["entities"]:
-            lines.append(json.dumps({"type": "entity", **entity}))
+            lines.append(json.dumps({"type": "entity", **entity}, ensure_ascii=False))
         for relation in graph["relations"]:
-            lines.append(json.dumps({"type": "relation", **relation}))
+            lines.append(json.dumps({"type": "relation", **relation}, ensure_ascii=False))
 
-        with open(self.memory_path, "w") as f:
+        with open(self.memory_path, "w", encoding="utf-8") as f:
             f.write("\n".join(lines))
 
     async def create_entities(self, entities: List[Entity]) -> List[Entity]:
